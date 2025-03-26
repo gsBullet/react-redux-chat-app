@@ -18,9 +18,7 @@ const useAuthChecked = () => {
           })
         );
       }
-      setTimeout(() => {
-        setAuthChecked(true);
-      }, 2000);
+      setAuthChecked(true);
     }
   }, [dispath]);
 
