@@ -10,7 +10,7 @@ const useAuthChecked = () => {
     const token = localStorage.getItem("auth");
     if (token) {
       const auth = JSON.parse(token);
-      if (auth.accessToken) {
+      if (auth.accessToken && auth.user) {
         dispath(
           userLoggedIn({
             accessToken: auth.accessToken,
@@ -18,8 +18,8 @@ const useAuthChecked = () => {
           })
         );
       }
-      setAuthChecked(true);
     }
+    setAuthChecked(true);
   }, [dispath]);
 
   return authChecked;

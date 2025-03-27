@@ -35,7 +35,7 @@ export const authApi = apiSlice.injectEndpoints({
         body: data,
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        // console.log("onQueryStarted", arg);
+     
         try {
           const result = await queryFulfilled;
           localStorage.setItem("auth", JSON.stringify({
@@ -49,16 +49,11 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
         } catch (error) {
-          console.log("onQueryStarted", error);
+          console.log(error);
         }
       },
     }),
-    // logout: builder.mutation({
-    //   query: () => ({
-    //     url: "auth/logout",
-    //     method: "POST",
-    //   }),
-    // }),
+    
   }),
 });
 

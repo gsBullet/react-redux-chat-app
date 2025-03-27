@@ -15,7 +15,7 @@ const initialState = {
      state.accessToken = action.payload.accessToken;
      state.user = action.payload.user;
     },
-    userLoggedOut:(state, action)=>{
+    userLoggedOut:(state)=>{
      state.accessToken = undefined;
      state.user = undefined;
     },

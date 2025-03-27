@@ -1,12 +1,6 @@
 {
   "users": [
     {
-      "email": "sumit@learnwithsumit.com",
-      "password": "$2a$10$CtHS.yCGS80jiuZx8yKEI.5zdiZykHF/6aPTDqpHl6ZqEFGISOHKO",
-      "name": "Sumit Saha",
-      "id": 1
-    },
-    {
       "email": "akash@learnwithsumit.com",
       "password": "$2a$10$CtHS.yCGS80jiuZx8yKEI.5zdiZykHF/6aPTDqpHl6ZqEFGISOHKO",
       "name": "Akash Ahmed",
@@ -19,46 +13,16 @@
       "id": 3
     },
     {
-      "email": "derys@mailinator.com",
-      "password": "$2a$10$iUjE3nCZDojlFxKBR6URN.IAHWbSk4Kh9Rjk5EeC2qIuvWFB5V7de",
-      "name": "Hedley Bishop",
-      "id": 4
-    },
-    {
-      "email": "dixuno@mailinator.com",
-      "password": "$2a$10$LDzPnsK9sg.j1mecleWuAOlCKa3KeykNmMymSLWOGi9GNIJ8N37o6",
-      "name": "Hunter Solis",
-      "id": 5
-    },
-    {
-      "email": "pypysewaly@mailinator.com",
-      "password": "$2a$10$e5/we6mZPiGiSzxDe/PeouQmJLmnePFvNKjSqt59jOl7BOZq5YjVS",
-      "name": "Emi Hampton",
-      "id": 6
-    },
-    {
-      "email": "ranex@mailinator.com",
-      "password": "$2a$10$5E/2tmivLnPf1WBxc45Xa.2RpCnTpWZRXG6Stdu65yqMVU5z15xOy",
-      "name": "Flavia Lloyd",
-      "id": 7
-    },
-    {
-      "email": "modetyn@mailinator.com",
-      "password": "$2a$10$Iw4ZkorEZoj5n.MYTlAj1uljwiwEGW/mJ9UwrGftpw/asDk5PIm/m",
-      "name": "Desiree Barton",
-      "id": 8
-    },
-    {
-      "email": "test@gmail.com",
-      "password": "$2a$10$Dt658kwLXZYkNuHXZbxy9u1M8vKD2odaNUyi8n/8KUYIOMr0KHARK",
-      "name": "test",
-      "id": 9
-    },
-    {
       "email": "admin@gmail.com",
       "password": "$2a$10$egWZnMOdQAj1aMAH/VzHY.L1omTs236.WYRMdcmtz1tSK3cE6jNxa",
       "name": "admin",
       "id": 10
+    },
+    {
+      "email": "sumit@learnwithsumit.com",
+      "password": "$2a$10$72XQv83X8/Gg0CrBWxKAUOrwsToMy4aI8nWTMQei4TeEq.E20jqDC",
+      "name": "sumit saha",
+      "id": 11
     }
   ],
   "conversations": [
