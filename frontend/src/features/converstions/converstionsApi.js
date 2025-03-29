@@ -1,10 +1,11 @@
 import { apiSlice } from "../api/apiSlice";
+let limit = process.env.REACT_APP_CONVERSTION_LIMIT || 10;
 
 export const converstionsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getConverstions: builder.query({
       query: (email) =>
-        `/conversations?participants_like=${email}&_sort=timestamp&_order=desc&_page=1&_limit=${process.env.REACT_APP_CONVERSTION_LIMIT || 5}`,
+        `/conversations?participants_like=${email}&_sort=timestamp&_order=desc&_page=1&_limit=${limit}`,
     }),
     // getConversation: builder.query({
     //   query: (id) => `conversations/${id}`,
