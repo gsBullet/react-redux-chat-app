@@ -7,23 +7,29 @@ export const converstionsApi = apiSlice.injectEndpoints({
       query: (email) =>
         `/conversations?participants_like=${email}&_sort=timestamp&_order=desc&_page=1&_limit=${limit}`,
     }),
+
+    getConverstion: builder.query({
+      query: ({ userEmail, partcipantEmail }) =>
+        `/conversations?participants_like=${userEmail}-${partcipantEmail} || ${partcipantEmail}- ${userEmail}`,
+    }),
+
     // getConversation: builder.query({
     //   query: (id) => `conversations/${id}`,
     // }),
-    // createConversation: builder.mutation({
-    //   query: (body) => ({
-    //     url: `conversations`,
-    //     method: "POST",
-    //     body,
-    //   }),
-    // }),
-    // updateConversation: builder.mutation({
-    //   query: ({ id, body }) => ({
-    //     url: `conversations/${id}`,
-    //     method: "PUT",
-    //     body,
-    //   }),
-    // }),
+    addConversation: builder.mutation({
+      query: (data) => ({
+        url: `conversations`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateConversation: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `conversations/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
     // deleteConversation: builder.mutation({
     //   query: (id) => ({
     //     url: `conversations/${id}`,
@@ -44,5 +50,9 @@ export const converstionsApi = apiSlice.injectEndpoints({
   }),
 });
 
-
-export const {useGetConverstionsQuery} = converstionsApi
+export const {
+  useGetConverstionsQuery,
+  useGetConverstionQuery,
+  useAddConversationMutation,
+  useUpdateConversationMutation,
+} = converstionsApi;

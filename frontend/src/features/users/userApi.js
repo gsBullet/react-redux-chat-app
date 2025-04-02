@@ -1,0 +1,12 @@
+import { apiSlice } from "../api/apiSlice";
+// let limit = process.env.REACT_APP_CONVERSTION_LIMIT || 10;
+
+export const usersApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getUser: builder.query({
+      query: (email) => `/users?email=${email}`,
+    }),
+  }),
+});
+
+export const { useGetUserQuery } = usersApi;
