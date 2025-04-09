@@ -3,21 +3,30 @@ import isValidateEmail from "../../utils/isValidEmail";
 import { useGetUserQuery } from "../../features/users/userApi";
 import Error from "../ui/Error";
 import { useDispatch, useSelector } from "react-redux";
-import { messagesApi } from "../../features/messages/messagesApi";
+// import { messagesApi } from "../../features/messages/messagesApi";
+import {
+  converstionsApi,
+  useAddConversationMutation,
+  useEditConversationMutation,
+} from "../../features/converstions/converstionsApi";
 
 export default function Modal({ open, control }) {
   const dispatch = useDispatch();
   const [to, setTo] = useState("");
   const [message, setMessage] = useState("");
+
   const [checkUser, setCheckUser] = useState(false);
-  const [conversation, setConversation] = useState(undefined)
+  const [conversation, setConversation] = useState(undefined);
   const [responseError, setResponseError] = useState("");
   const { data: participant } = useGetUserQuery(to, {
     skip: !checkUser,
   });
-  const { user } = useSelector((state) => state.auth) || {};
-  const { email: myEmail } = user || {};
-  console.log("conversation", conversation);
+  const [addConversation, { isSuccess: isAddSuccess }] =
+    useAddConversationMutation();
+  const [editConversation, { isSuccess: isEditSuccess }] =
+    useEditConversationMutation();
+  const { user: loggedInUser } = useSelector((state) => state.auth) || {};
+  const { email: myEmail } = loggedInUser || {};
 
   const debounceHandler = (fn, delay) => {
     let timeoutId;
@@ -39,25 +48,56 @@ export default function Modal({ open, control }) {
   const handleSearch = debounceHandler(toSearch, 500);
 
   useEffect(() => {
-    if (participant?.length > 0 && participant[0].email === myEmail) {
+    if (participant?.length > 0 && participant[0].email !== myEmail) {
       dispatch(
-        messagesApi.endpoints.getMessages
-          .initiate({
-            userEmail: myEmail,
-            participant: to,
-          })
-          .unwrap()
-          .then((data) => {
-            setConversation(data);
-            // console.log(data);
-          })
-          .catch((error) => {
-            setResponseError("Error fetching messages:");
-          })
-      );
+        converstionsApi.endpoints.getConverstion.initiate({
+          userEmail: myEmail,
+          participantEmail: to,
+        })
+      )
+        .unwrap()
+        .then((data) => {
+          setConversation(data);
+        })
+        .catch((error) => {
+          console.log("Error fetching messages:", error);
+          setResponseError("Error fetching messages:");
+        });
     }
   }, [dispatch, myEmail, to, participant]);
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    if (conversation?.length === 0) {
+      addConversation({
+        participants: `${myEmail}-${participant[0].email}`,
+        users: [loggedInUser, participant[0]],
+        message,
+        timestamp: new Date().getTime(),
+      });
+    } else if (conversation?.length > 0) {
+      editConversation({
+        id: conversation[0]?.id,
+        sender: myEmail,
+        data: {
+          participants: `${myEmail}-${participant[0].email}`,
+          users: [loggedInUser, participant[0]],
+          message,
+          timestamp: new Date().getTime(),
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isAddSuccess || isEditSuccess) {
+      // setTo("");
+      // setMessage("");
+      // setCheckUser(false);
+      // setConversation(undefined);
+      control();
+    }
+  }, [isAddSuccess, isEditSuccess]);
   return (
     open && (
       <>
@@ -69,7 +109,7 @@ export default function Modal({ open, control }) {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Send message
           </h2>
-          <form className="mt-8 space-y-6">
+          <form className="mt-8 space-y-6" onSubmit={submitHandler}>
             <input type="hidden" name="remember" value="true" />
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
@@ -93,7 +133,7 @@ export default function Modal({ open, control }) {
                 <textarea
                   id="message"
                   name="message"
-                  type="message"
+                  type="text"
                   required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-violet-500 focus:border-violet-500 focus:z-10 sm:text-sm"
                   placeholder="Message"
@@ -106,6 +146,10 @@ export default function Modal({ open, control }) {
               <button
                 type="submit"
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                disabled={
+                  conversation === undefined ||
+                  (participant?.length > 0 && participant[0].email === myEmail)
+                }
               >
                 Send Message
               </button>
@@ -116,6 +160,7 @@ export default function Modal({ open, control }) {
             {participant?.length > 0 && participant[0].email === myEmail && (
               <Error message="You can not message to yourself" />
             )}
+            {responseError && <Error message={responseError} />}
           </form>
         </div>
       </>

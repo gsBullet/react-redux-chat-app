@@ -1,4 +1,5 @@
 import { apiSlice } from "../api/apiSlice";
+import { messagesApi } from "../messages/messagesApi";
 let limit = process.env.REACT_APP_CONVERSTION_LIMIT || 10;
 
 export const converstionsApi = apiSlice.injectEndpoints({
@@ -9,8 +10,8 @@ export const converstionsApi = apiSlice.injectEndpoints({
     }),
 
     getConverstion: builder.query({
-      query: ({ userEmail, partcipantEmail }) =>
-        `/conversations?participants_like=${userEmail}-${partcipantEmail} || ${partcipantEmail}- ${userEmail}`,
+      query: ({ userEmail, participantEmail }) =>
+        `/conversations?participants_like=${userEmail}-${participantEmail}&&participants_like=${participantEmail}-${userEmail}`,
     }),
 
     // getConversation: builder.query({
@@ -23,12 +24,34 @@ export const converstionsApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    updateConversation: builder.mutation({
-      query: ({ id, data }) => ({
+    editConversation: builder.mutation({
+      query: ({ id, data, sender }) => ({
         url: `conversations/${id}`,
         method: "PATCH",
         body: data,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const conversation = await queryFulfilled;
+        if (conversation?.data?.id) {
+          const users = arg.data.users;
+          const receiverUser = users.find(
+            (user) => user.email !== arg.sender.email
+          );
+          const senderUser = users.find(
+            (user) => user.email === arg.sender.email
+          );
+
+          dispatch(
+            messagesApi.endpoints.getMessages.initiate({
+              conversationId: conversation?.data?.id,
+              sender: senderUser,
+              receiver: receiverUser,
+              message: arg.data.message,
+              timestamp: arg.data.timestamp,
+            })
+          );
+        }
+      },
     }),
     // deleteConversation: builder.mutation({
     //   query: (id) => ({
@@ -54,5 +77,5 @@ export const {
   useGetConverstionsQuery,
   useGetConverstionQuery,
   useAddConversationMutation,
-  useUpdateConversationMutation,
+  useEditConversationMutation,
 } = converstionsApi;
