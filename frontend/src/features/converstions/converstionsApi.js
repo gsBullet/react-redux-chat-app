@@ -18,15 +18,33 @@ export const converstionsApi = apiSlice.injectEndpoints({
     //   query: (id) => `conversations/${id}`,
     // }),
     addConversation: builder.mutation({
-      query: (data) => ({
-        url: `conversations`,
+      query: ({ data, sender }) => ({
+        url: `/conversations`,
         method: "POST",
         body: data,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const conversation = await queryFulfilled;
+        if (conversation?.data?.id) {
+          const users = arg.data.users;
+          const receiverUser = users.find((user) => user.email !== arg.sender);
+          const senderUser = users.find((user) => user.email === arg.sender);
+
+          await dispatch(
+            messagesApi.endpoints.addMessages.initiate({
+              conversationId: conversation?.data?.id,
+              sender: senderUser,
+              receiver: receiverUser,
+              message: arg.data.message,
+              timestamp: arg.data.timestamp,
+            })
+          );
+        }
+      },
     }),
     editConversation: builder.mutation({
       query: ({ id, data, sender }) => ({
-        url: `conversations/${id}`,
+        url: `/conversations/${id}`,
         method: "PATCH",
         body: data,
       }),
@@ -34,20 +52,17 @@ export const converstionsApi = apiSlice.injectEndpoints({
         const conversation = await queryFulfilled;
         if (conversation?.data?.id) {
           const users = arg.data.users;
-          const receiverUser = users.find(
-            (user) => user.email !== arg.sender.email
-          );
-          const senderUser = users.find(
-            (user) => user.email === arg.sender.email
-          );
-
-          dispatch(
-            messagesApi.endpoints.getMessages.initiate({
+          const receiverUser = users.find((user) => user.email !== arg.sender);
+          const senderUser = users.find((user) => user.email === arg.sender);
+          
+        
+          await dispatch(
+            messagesApi.endpoints.addMessages.initiate({
               conversationId: conversation?.data?.id,
               sender: senderUser,
               receiver: receiverUser,
-              message: arg.data.message,
-              timestamp: arg.data.timestamp,
+              message: arg?.data?.message,
+              timestamp: arg?.data?.timestamp,
             })
           );
         }

@@ -68,16 +68,19 @@ export default function Modal({ open, control }) {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (conversation?.length === 0) {
-      addConversation({
-        participants: `${myEmail}-${participant[0].email}`,
-        users: [loggedInUser, participant[0]],
-        message,
-        timestamp: new Date().getTime(),
-      });
-    } else if (conversation?.length > 0) {
+    if (conversation?.length > 0) {
       editConversation({
         id: conversation[0]?.id,
+        sender: myEmail,
+        data: {
+          participants: `${myEmail}-${participant[0].email}`,
+          users: [loggedInUser, participant[0]],
+          message,
+          timestamp: new Date().getTime(),
+        },
+      });
+    } else if (conversation?.length === 0) {
+      addConversation({
         sender: myEmail,
         data: {
           participants: `${myEmail}-${participant[0].email}`,
@@ -91,11 +94,9 @@ export default function Modal({ open, control }) {
 
   useEffect(() => {
     if (isAddSuccess || isEditSuccess) {
-      // setTo("");
-      // setMessage("");
-      // setCheckUser(false);
-      // setConversation(undefined);
       control();
+      setTo("");
+      setMessage("");
     }
   }, [isAddSuccess, isEditSuccess]);
   return (

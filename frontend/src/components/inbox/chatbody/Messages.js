@@ -12,7 +12,7 @@ export default function Messages({ messages = [] }) {
           .sort((a, b) => a.timestamp - b.timestamp)
           .map((message) => (
             <Message
-              key={message._id}
+              key={message.id}
               justify={message?.sender?.email === email ? "end" : "start"}
               message={message.message}
             />
