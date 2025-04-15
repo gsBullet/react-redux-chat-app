@@ -1,20 +1,20 @@
 import { useSelector } from "react-redux";
 import ChatItem from "./ChatItem";
-import { useGetConverstionsQuery } from "../../features/converstions/converstionsApi";
 import Error from "../ui/Error";
 import moment from "moment";
 import gravaterUrl from "gravatar-url";
 import { Link } from "react-router-dom";
+import { useGetConversationsQuery } from "../../features/converstions/conversationsApi";
 
 export default function ChatItems() {
   const { user } = useSelector((state) => state.auth) || {};
   const { email } = user || {};
   const {
-    data: converstions,
+    data: conversations,
     isError,
     isLoading,
     error,
-  } = useGetConverstionsQuery(email);
+  } = useGetConversationsQuery(email);
 
   let content = null;
   if (isLoading) {
@@ -25,10 +25,10 @@ export default function ChatItems() {
         <Error message={error?.data} />
       </li>
     );
-  } else if (!isLoading && !isError && converstions.length === 0) {
+  } else if (!isLoading && !isError && conversations.length === 0) {
     content = <li className="mt-2 text-center">No converstions found</li>;
-  } else if (!isLoading && !isError && converstions.length > 0) {
-    content = converstions.map((conversation) => {
+  } else if (!isLoading && !isError && conversations.length > 0) {
+    content = conversations.map((conversation) => {
       const { id, message, timestamp } = conversation;
       const { name, email: partnerEmail } = conversation.users.find(
         (u) => u.email !== email

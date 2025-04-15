@@ -1,56 +1,39 @@
 import { useEffect, useState } from "react";
-import isValidateEmail from "../../utils/isValidEmail";
-import { useGetUserQuery } from "../../features/users/userApi";
-import Error from "../ui/Error";
 import { useDispatch, useSelector } from "react-redux";
-// import { messagesApi } from "../../features/messages/messagesApi";
+
+import isValidEmail from "../../utils/isValidEmail";
+import Error from "../ui/Error";
+import { useGetUserQuery } from "../../features/users/userApi";
 import {
-  converstionsApi,
+  conversationsApi,
   useAddConversationMutation,
   useEditConversationMutation,
-} from "../../features/converstions/converstionsApi";
+} from "../../features/converstions/conversationsApi";
 
 export default function Modal({ open, control }) {
-  const dispatch = useDispatch();
   const [to, setTo] = useState("");
   const [message, setMessage] = useState("");
-
-  const [checkUser, setCheckUser] = useState(false);
-  const [conversation, setConversation] = useState(undefined);
-  const [responseError, setResponseError] = useState("");
-  const { data: participant } = useGetUserQuery(to, {
-    skip: !checkUser,
-  });
-  const [addConversation, { isSuccess: isAddSuccess }] =
-    useAddConversationMutation();
-  const [editConversation, { isSuccess: isEditSuccess }] =
-    useEditConversationMutation();
+  const [userCheck, setUserCheck] = useState(false);
   const { user: loggedInUser } = useSelector((state) => state.auth) || {};
   const { email: myEmail } = loggedInUser || {};
+  const dispatch = useDispatch();
+  const [responseError, setResponseError] = useState("");
+  const [conversation, setConversation] = useState(undefined);
 
-  const debounceHandler = (fn, delay) => {
-    let timeoutId;
-    return (...args) => {
-      clearTimeout(timeoutId);
+  const { data: participant } = useGetUserQuery(to, {
+    skip: !userCheck,
+  });
 
-      timeoutId = setTimeout(() => {
-        fn(...args);
-      }, delay);
-    };
-  };
-  const toSearch = (value) => {
-    if (isValidateEmail(value)) {
-      setTo(value);
-      setCheckUser(true);
-    }
-  };
-
-  const handleSearch = debounceHandler(toSearch, 500);
+  const [addConversation, { isSuccess: isAddConversationSuccess }] =
+    useAddConversationMutation();
+  const [editConversation, { isSuccess: isEditConversationSuccess }] =
+    useEditConversationMutation();
 
   useEffect(() => {
     if (participant?.length > 0 && participant[0].email !== myEmail) {
+      // check conversation existance
       dispatch(
-        converstionsApi.endpoints.getConverstion.initiate({
+        conversationsApi.endpoints.getConversation.initiate({
           userEmail: myEmail,
           participantEmail: to,
         })
@@ -59,18 +42,47 @@ export default function Modal({ open, control }) {
         .then((data) => {
           setConversation(data);
         })
-        .catch((error) => {
-          console.log("Error fetching messages:", error);
-          setResponseError("Error fetching messages:");
+        .catch((err) => {
+          setResponseError("There was a problem!");
         });
     }
-  }, [dispatch, myEmail, to, participant]);
+  }, [participant, dispatch, myEmail, to]);
 
-  const submitHandler = (e) => {
+  // listen conversation add/edit success
+  useEffect(() => {
+    if (isAddConversationSuccess || isEditConversationSuccess) {
+      control();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAddConversationSuccess, isEditConversationSuccess]);
+
+  const debounceHandler = (fn, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        fn(...args);
+      }, delay);
+    };
+  };
+
+  const doSearch = (value) => {
+    if (isValidEmail(value)) {
+      // check user API
+      setUserCheck(true);
+      setTo(value);
+    }
+  };
+
+  const handleSearch = debounceHandler(doSearch, 500);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+
     if (conversation?.length > 0) {
+      // edit conversation
       editConversation({
-        id: conversation[0]?.id,
+        id: conversation[0].id,
         sender: myEmail,
         data: {
           participants: `${myEmail}-${participant[0].email}`,
@@ -80,6 +92,7 @@ export default function Modal({ open, control }) {
         },
       });
     } else if (conversation?.length === 0) {
+      // add conversation
       addConversation({
         sender: myEmail,
         data: {
@@ -92,13 +105,6 @@ export default function Modal({ open, control }) {
     }
   };
 
-  useEffect(() => {
-    if (isAddSuccess || isEditSuccess) {
-      control();
-      setTo("");
-      setMessage("");
-    }
-  }, [isAddSuccess, isEditSuccess]);
   return (
     open && (
       <>
@@ -110,8 +116,7 @@ export default function Modal({ open, control }) {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Send message
           </h2>
-          <form className="mt-8 space-y-6" onSubmit={submitHandler}>
-            <input type="hidden" name="remember" value="true" />
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
                 <label htmlFor="to" className="sr-only">
@@ -143,6 +148,7 @@ export default function Modal({ open, control }) {
                 />
               </div>
             </div>
+
             <div>
               <button
                 type="submit"
@@ -155,12 +161,14 @@ export default function Modal({ open, control }) {
                 Send Message
               </button>
             </div>
+
             {participant?.length === 0 && (
-              <Error message="Email does not found" />
-            )}{" "}
-            {participant?.length > 0 && participant[0].email === myEmail && (
-              <Error message="You can not message to yourself" />
+              <Error message="This user does not exist!" />
             )}
+            {participant?.length > 0 && participant[0].email === myEmail && (
+              <Error message="You can not send message to yourself!" />
+            )}
+
             {responseError && <Error message={responseError} />}
           </form>
         </div>

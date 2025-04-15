@@ -12,13 +12,18 @@ server.db = router.db;
 server.use(middlewares);
 
 const rules = auth.rewriter({
-    users: 640,
-    conversations: 660,
-    messages: 660,
+  users: 640,
+  conversations: 660,
+  messages: 660,
 });
 
 server.use(rules);
 server.use(auth);
 server.use(router);
 
-server.listen(port);
+// server.listen(port);server
+server.listen(port, (e) => {
+  //   console.log(e);
+
+  console.log(`Server running on http://localhost:${port}`);
+});

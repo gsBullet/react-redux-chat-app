@@ -1,180 +1,50 @@
 {
   "users": [
     {
-      "email": "sumit@learnwithsumit.com",
-      "password": "$2a$10$cgotUg5uVlOUU491ke2.i..2NI0Ao9/tZyCntme360bgpMl0OpqKK",
-      "name": "sumit",
+      "email": "asif@gmail.com",
+      "password": "$2a$10$FqNz0MRsTgJBjTFsVvgq7Ox82CMUQZfjjQAGcTmReGM8Bg97YBDBa",
+      "name": "asif",
       "id": 1
     },
     {
-      "email": "admin@gmail.com",
-      "password": "$2a$10$bBh9Mb/kL.4bMQMTQuVhqunDr5p/JDb4ggu1PqdknfbXQM.7/ahQC",
-      "name": "admin",
+      "email": "sumit@learnwithsumit.com",
+      "password": "$2a$10$8GiH6HgC/cAPrwLszG5Dv.HBlFNeeTZhnWEENdqSzzClCH7eoal6i",
+      "name": "sumit",
       "id": 2
     },
     {
-      "email": "hello@gmail.com",
-      "password": "$2a$10$0Q89kPAZqI4ki2E7CEvm7ONS9GndqEaBdfNG4eF4Y2emkE270JOuS",
-      "name": "hello",
+      "email": "my@gmail.com",
+      "password": "$2a$10$4q8oCqNjBmM8fmFVyLpmEOa.VdRXMrElwZwIJxiZhg8jG5pVVWq7K",
+      "name": "my",
       "id": 3
     },
     {
-      "email": "my@gmail.com",
-      "password": "$2a$10$vXRlG9FXX5l2gg/77/fTTeqCHBeKSJx.sENxzH79g/KPuAAVTjTpO",
-      "name": "M",
+      "email": "admin@gmail.com",
+      "password": "$2a$10$DYXl2HBinBIPKMl8jYLgBONi3AfGXFHQ/TqDWHsa3f8wTBnW4KTdG",
+      "name": "admin",
       "id": 4
     }
   ],
   "conversations": [
     {
-      "participants": "sumit@learnwithsumit.com-admin@gmail.com",
-      "users": [
-        {
-          "email": "sumit@learnwithsumit.com",
-          "name": "sumit",
-          "id": 1
-        },
-        {
-          "email": "admin@gmail.com",
-          "password": "$2a$10$bBh9Mb/kL.4bMQMTQuVhqunDr5p/JDb4ggu1PqdknfbXQM.7/ahQC",
-          "name": "admin",
-          "id": 2
-        }
-      ],
-      "message": "hello",
-      "timestamp": 1744176207583,
-      "id": 1
-    },
-    {
-      "participants": "hello@gmail.com-admin@gmail.com",
-      "users": [
-        {
-          "email": "hello@gmail.com",
-          "name": "hello",
-          "id": 3
-        },
-        {
-          "email": "admin@gmail.com",
-          "password": "$2a$10$bBh9Mb/kL.4bMQMTQuVhqunDr5p/JDb4ggu1PqdknfbXQM.7/ahQC",
-          "name": "admin",
-          "id": 2
-        }
-      ],
-      "message": "1111",
-      "timestamp": 1744176380922,
-      "id": 2
-    },
-    {
-      "participants": "sumit@learnwithsumit.com-hello@gmail.com",
-      "users": [
-        {
-          "email": "sumit@learnwithsumit.com",
-          "name": "sumit",
-          "id": 1
-        },
-        {
-          "email": "hello@gmail.com",
-          "password": "$2a$10$0Q89kPAZqI4ki2E7CEvm7ONS9GndqEaBdfNG4eF4Y2emkE270JOuS",
-          "name": "hello",
-          "id": 3
-        }
-      ],
-      "message": "asadsfasdfadsf",
-      "timestamp": 1744179863508,
-      "id": 3
-    },
-    {
       "participants": "my@gmail.com-admin@gmail.com",
       "users": [
         {
           "email": "my@gmail.com",
-          "name": "M",
-          "id": 4
+          "name": "my",
+          "id": 3
         },
         {
           "email": "admin@gmail.com",
-          "password": "$2a$10$bBh9Mb/kL.4bMQMTQuVhqunDr5p/JDb4ggu1PqdknfbXQM.7/ahQC",
+          "password": "$2a$10$DYXl2HBinBIPKMl8jYLgBONi3AfGXFHQ/TqDWHsa3f8wTBnW4KTdG",
           "name": "admin",
-          "id": 2
-        }
-      ],
-      "message": "bro",
-      "timestamp": 1744180377589,
-      "id": 4
-    },
-    {
-      "participants": "my@gmail.com-hello@gmail.com",
-      "users": [
-        {
-          "email": "my@gmail.com",
-          "name": "M",
           "id": 4
-        },
-        {
-          "email": "hello@gmail.com",
-          "password": "$2a$10$0Q89kPAZqI4ki2E7CEvm7ONS9GndqEaBdfNG4eF4Y2emkE270JOuS",
-          "name": "hello",
-          "id": 3
         }
       ],
       "message": "ok",
-      "timestamp": 1744180427918,
-      "id": 5
-    },
-    {
-      "participants": "sumit@learnwithsumit.com-my@gmail.com",
-      "users": [
-        {
-          "email": "sumit@learnwithsumit.com",
-          "name": "sumit",
-          "id": 1
-        },
-        {
-          "email": "my@gmail.com",
-          "password": "$2a$10$vXRlG9FXX5l2gg/77/fTTeqCHBeKSJx.sENxzH79g/KPuAAVTjTpO",
-          "name": "M",
-          "id": 4
-        }
-      ],
-      "message": "ok ",
-      "timestamp": 1744180499560,
-      "id": 6
+      "timestamp": 1744720447927,
+      "id": 1
     }
   ],
-  "messages": [
-    {
-      "conversationId": 1,
-      "sender": {
-        "email": "admin@gmail.com",
-        "name": "admin",
-        "id": 2
-      },
-      "receiver": {
-        "email": "sumit@learnwithsumit.com",
-        "password": "$2a$10$cgotUg5uVlOUU491ke2.i..2NI0Ao9/tZyCntme360bgpMl0OpqKK",
-        "name": "sumit",
-        "id": 1
-      },
-      "message": "ok boss",
-      "timestamp": 1744174641039,
-      "id": 1
-    },
-    {
-      "conversationId": 3,
-      "sender": {
-        "email": "sumit@learnwithsumit.com",
-        "name": "sumit",
-        "id": 1
-      },
-      "receiver": {
-        "email": "hello@gmail.com",
-        "password": "$2a$10$0Q89kPAZqI4ki2E7CEvm7ONS9GndqEaBdfNG4eF4Y2emkE270JOuS",
-        "name": "hello",
-        "id": 3
-      },
-      "message": "hello boss",
-      "timestamp": 1744177849012,
-      "id": 2
-    }
-  ]
+  "messages": []
 }
