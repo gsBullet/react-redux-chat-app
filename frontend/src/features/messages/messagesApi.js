@@ -1,6 +1,5 @@
 import { apiSlice } from "../api/apiSlice";
 
-
 export const messagesApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getMessages: builder.query({
@@ -13,9 +12,17 @@ export const messagesApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+     
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log("Message saved successfully:", data);
+        } catch (err) {
+          console.error("Message save failed:", err);
+        }
+      },
     }),
   }),
 });
 
 export const { useGetMessagesQuery, useAddMessageMutation } = messagesApi;
-

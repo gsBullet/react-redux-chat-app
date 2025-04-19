@@ -1,49 +1,99 @@
 {
   "users": [
     {
-      "email": "asif@gmail.com",
-      "password": "$2a$10$FqNz0MRsTgJBjTFsVvgq7Ox82CMUQZfjjQAGcTmReGM8Bg97YBDBa",
-      "name": "asif",
+      "email": "admin@gmail.com",
+      "password": "$2a$10$pODUVEusVubGmvw42igWJuUMc4iN3Nk6T79QPs1VrovkUFlu9aRuC",
+      "name": "admin",
       "id": 1
     },
     {
-      "email": "sumit@learnwithsumit.com",
-      "password": "$2a$10$8GiH6HgC/cAPrwLszG5Dv.HBlFNeeTZhnWEENdqSzzClCH7eoal6i",
-      "name": "sumit",
+      "email": "ad1@gmail.com",
+      "password": "$2a$10$T6QS8cDTnyTAN2p5MWE52OHbSY9f9.8VVOP5grRmJG15UXx6uUJP6",
+      "name": "ad1",
       "id": 2
     },
     {
-      "email": "my@gmail.com",
-      "password": "$2a$10$4q8oCqNjBmM8fmFVyLpmEOa.VdRXMrElwZwIJxiZhg8jG5pVVWq7K",
-      "name": "my",
+      "email": "ad2@gmail.com",
+      "password": "$2a$10$T6QS8cDTnyTAN2p5MWE52OHbSY9f9.8VVOP5grRmJG15UXx6uUJP6",
+      "name": "ad2",
       "id": 3
     },
     {
-      "email": "admin@gmail.com",
-      "password": "$2a$10$DYXl2HBinBIPKMl8jYLgBONi3AfGXFHQ/TqDWHsa3f8wTBnW4KTdG",
-      "name": "admin",
+      "email": "ad3@gmail.com",
+      "password": "$2a$10$T6QS8cDTnyTAN2p5MWE52OHbSY9f9.8VVOP5grRmJG15UXx6uUJP6",
+      "name": "ad3",
       "id": 4
+    },
+    {
+      "email": "ad4@gmail.com",
+      "password": "$2a$10$T6QS8cDTnyTAN2p5MWE52OHbSY9f9.8VVOP5grRmJG15UXx6uUJP6",
+      "name": "ad4",
+      "id": 5
+    },
+    {
+      "email": "asif@gmail.com",
+      "password": "$2a$10$s7zcXVFH8pvTXC5cyDP5iOIyCBUFsNdQDDSGT3etUWTnbF6OkgRki",
+      "name": "asif",
+      "id": 6
     }
   ],
   "conversations": [
     {
-      "participants": "my@gmail.com-admin@gmail.com",
+      "participants": "ad1@gmail.com-ad2@gmail.com",
       "users": [
         {
-          "email": "my@gmail.com",
-          "name": "my",
-          "id": 3
+          "email": "ad1@gmail.com",
+          "name": "ad1",
+          "id": 2
         },
         {
-          "email": "admin@gmail.com",
-          "password": "$2a$10$DYXl2HBinBIPKMl8jYLgBONi3AfGXFHQ/TqDWHsa3f8wTBnW4KTdG",
-          "name": "admin",
+          "email": "ad2@gmail.com",
+          "password": "$2a$10$T6QS8cDTnyTAN2p5MWE52OHbSY9f9.8VVOP5grRmJG15UXx6uUJP6",
+          "name": "ad2",
+          "id": 3
+        }
+      ],
+      "message": "hello",
+      "timestamp": 1744957620469,
+      "id": 1
+    },
+    {
+      "participants": "ad1@gmail.com-ad3@gmail.com",
+      "users": [
+        {
+          "email": "ad1@gmail.com",
+          "name": "ad1",
+          "id": 2
+        },
+        {
+          "email": "ad3@gmail.com",
+          "password": "$2a$10$T6QS8cDTnyTAN2p5MWE52OHbSY9f9.8VVOP5grRmJG15UXx6uUJP6",
+          "name": "ad3",
           "id": 4
         }
       ],
-      "message": "ok",
-      "timestamp": 1744720447927,
-      "id": 1
+      "message": "s",
+      "timestamp": 1744958160549,
+      "id": 2
+    },
+    {
+      "participants": "ad1@gmail.com-ad4@gmail.com",
+      "users": [
+        {
+          "email": "ad1@gmail.com",
+          "name": "ad1",
+          "id": 2
+        },
+        {
+          "email": "ad4@gmail.com",
+          "password": "$2a$10$T6QS8cDTnyTAN2p5MWE52OHbSY9f9.8VVOP5grRmJG15UXx6uUJP6",
+          "name": "ad4",
+          "id": 5
+        }
+      ],
+      "message": "hello",
+      "timestamp": 1744957836674,
+      "id": 3
     }
   ],
   "messages": []
