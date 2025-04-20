@@ -25,13 +25,12 @@ export const conversationsApi = apiSlice.injectEndpoints({
           socket.on("conversations", (data) => {
             updateCachedData((draft) => {
               const conversation = draft.find((d) => d.id == data.data.id);
-              if (conversation.id) {
+              if (conversation?.id) {
                 conversation.message = data.data.message;
                 conversation.timestamp = data.data.timestamp;
+              } else {
+                draft.push(data.data);
               }
-              //  else {
-              //   draft.push(data.data);
-              // }
             });
           });
         } catch (error) {
@@ -53,21 +52,18 @@ export const conversationsApi = apiSlice.injectEndpoints({
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const conversation = await queryFulfilled;
-
-        // Update cache for conversations for this user (assumes sender is part of arg or response)
         const pathResult = dispatch(
           apiSlice.util.updateQueryData(
             "getConversations",
             arg.sender,
             (draft) => {
-              const existing = draft.find((c) => c.id == conversation.data.id);
-
-              if (!existing) {
-                draft.unshift(conversation);
-              }
+              draft.sort(
+                (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+              );
             }
           )
         );
+
 
         try {
           if (conversation?.data?.id) {
@@ -88,7 +84,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
             );
           }
         } catch (err) {
-          pathResult.undo();
+          // pathResult.undo();
           console.error("Error adding message:", err);
         }
       },
@@ -111,9 +107,14 @@ export const conversationsApi = apiSlice.injectEndpoints({
                 draftResult.message = arg.data.message;
                 draftResult.timestamp = arg.data.timestamp;
               }
+
+              draft.sort(
+                (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+              );
             }
           )
         );
+
         try {
           const conversation = await queryFulfilled;
           if (conversation?.data?.id) {
@@ -144,7 +145,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
             );
           }
         } catch (err) {
-          patchResult.undo();
+          // patchResult.undo();
           console.error("Error editing conversation:", err);
         }
       },

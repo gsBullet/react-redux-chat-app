@@ -29,32 +29,6 @@ export default function Modal({ open, control }) {
   const [editConversation, { isSuccess: isEditConversationSuccess }] =
     useEditConversationMutation();
 
-  useEffect(() => {
-    if (participant?.length > 0 && participant[0].email !== myEmail) {
-      // check conversation existance
-      dispatch(
-        conversationsApi.endpoints.getConversation.initiate({
-          userEmail: myEmail,
-          participantEmail: to,
-        })
-      )
-        .unwrap()
-        .then((data) => {
-          setConversation(data);
-        })
-        .catch((err) => {
-          setResponseError("There was a problem!");
-        });
-    }
-  }, [participant, dispatch, myEmail, to]);
-
-  // listen conversation add/edit success
-  useEffect(() => {
-    if (isAddConversationSuccess || isEditConversationSuccess) {
-      control();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAddConversationSuccess, isEditConversationSuccess]);
 
   const debounceHandler = (fn, delay) => {
     let timeoutId;
@@ -104,6 +78,33 @@ export default function Modal({ open, control }) {
       });
     }
   };
+
+
+  useEffect(() => {
+    if (participant?.length > 0 && participant[0].email !== myEmail) {
+      // check conversation existance
+      dispatch(
+        conversationsApi.endpoints.getConversation.initiate({
+          userEmail: myEmail,
+          participantEmail: to,
+        })
+      )
+        .unwrap()
+        .then((data) => {
+          setConversation(data);
+        })
+        .catch((err) => {
+          setResponseError("There was a problem!");
+        });
+    }
+  }, [participant, dispatch, myEmail, to]);
+  // listen conversation add/edit success
+  useEffect(() => {
+    if (isAddConversationSuccess || isEditConversationSuccess) {
+      control();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAddConversationSuccess, isEditConversationSuccess]);
 
   return (
     open && (
