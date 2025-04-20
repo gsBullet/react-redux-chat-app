@@ -7,6 +7,13 @@ export const conversationsApi = apiSlice.injectEndpoints({
     getConversations: builder.query({
       query: (email) =>
         `/conversations?participants_like=${email}&_sort=timestamp&_order=desc&_page=1&_limit=${process.env.REACT_APP_CONVERSATION_LIMIT}`,
+      transformResponse(apiResponse, meta) {
+        const totalCount = meta.response.headers.get("x-total-count");
+        return {
+          data: apiResponse,
+          totalCount,
+        };
+      },
       async onCacheEntryAdded(
         arg,
         { cacheDataLoaded, updateCachedData, cacheEntryRemoved }
@@ -24,12 +31,12 @@ export const conversationsApi = apiSlice.injectEndpoints({
           await cacheDataLoaded;
           socket.on("conversations", (data) => {
             updateCachedData((draft) => {
-              const conversation = draft.find((d) => d.id == data.data.id);
+              const conversation = draft.data.find((d) => d.id == data.data.id);
               if (conversation?.id) {
                 conversation.message = data.data.message;
                 conversation.timestamp = data.data.timestamp;
               } else {
-                draft.push(data.data);
+                draft.data.push(data.data);
               }
             });
           });
@@ -40,6 +47,31 @@ export const conversationsApi = apiSlice.injectEndpoints({
         socket.close();
       },
     }),
+
+    getMoreConversations: builder.query({
+      query: ({ email, page }) =>
+        `/conversations?participants_like=${email}&_sort=timestamp&_order=desc&_page=${page}&_limit=${process.env.REACT_APP_CONVERSATION_LIMIT}`,
+
+      async onQueryStarted({ email }, { queryFulfilled, dispatch }) {
+        // Optimistically update the cache start
+        const conversations = await queryFulfilled;
+        if (conversations.data.length > 0) {
+          dispatch(
+            apiSlice.util.updateQueryData(
+              "getConversations",
+              email,
+              (draft) => {
+                return {
+                  data: [...draft.data, ...conversations.data],
+                  totalCount: Number(draft.totalCount),
+                };
+              }
+            )
+          );
+        }
+      },
+    }),
+
     getConversation: builder.query({
       query: ({ userEmail, participantEmail }) =>
         `/conversations?participants_like=${userEmail}-${participantEmail}&participants_like=${participantEmail}-${userEmail}`,
@@ -57,13 +89,12 @@ export const conversationsApi = apiSlice.injectEndpoints({
             "getConversations",
             arg.sender,
             (draft) => {
-              draft.sort(
+              draft.data.sort(
                 (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
               );
             }
           )
         );
-
 
         try {
           if (conversation?.data?.id) {
@@ -102,13 +133,13 @@ export const conversationsApi = apiSlice.injectEndpoints({
             "getConversations",
             arg.sender,
             (draft) => {
-              const draftResult = draft.find((c) => c.id == arg.id);
+              const draftResult = draft.data.find((c) => c.id == arg.id);
               if (draftResult) {
                 draftResult.message = arg.data.message;
                 draftResult.timestamp = arg.data.timestamp;
               }
 
-              draft.sort(
+              draft.data.sort(
                 (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
               );
             }
@@ -139,7 +170,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
                 "getMessages",
                 res?.conversationId.toString(),
                 (draft) => {
-                  draft.push(res);
+                  draft.data.push(res);
                 }
               )
             );
@@ -155,6 +186,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
 
 export const {
   useGetConversationsQuery,
+  useGetMoreConversationsQuery,
   useGetConversationQuery,
   useAddConversationMutation,
   useEditConversationMutation,
