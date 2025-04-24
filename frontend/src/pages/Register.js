@@ -16,16 +16,14 @@ export default function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (data?.accessToken && data?.user) {
-      // localStorage.setItem("accessToken", data.accessToken);
+    if (data?.message) {
       navigate("/inbox");
-      // setError("Registration Successful");
     }
 
     if (responseError?.data) {
-      setError(responseError?.data);
+      setError(responseError?.data?.message);
     }
-  }, [data, responseError, navigate]);
+  }, [data, responseError?.data, navigate]);
 
   const handleRegister = (e) => {
     e.preventDefault();

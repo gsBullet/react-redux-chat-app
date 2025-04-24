@@ -146,8 +146,8 @@ export const conversationsApi = apiSlice.injectEndpoints({
           )
         );
 
+        const conversation = await queryFulfilled;
         try {
-          const conversation = await queryFulfilled;
           if (conversation?.data?.id) {
             const senderUser = arg.data.users.find(
               (user) => user.email === arg.sender
@@ -164,19 +164,20 @@ export const conversationsApi = apiSlice.injectEndpoints({
                 timestamp: arg.data.timestamp,
               })
             ).unwrap();
+
             // Update the messages cache for the conversation
             dispatch(
               apiSlice.util.updateQueryData(
                 "getMessages",
                 res?.conversationId.toString(),
                 (draft) => {
-                  draft.data.push(res);
+                  draft.push(res);
                 }
               )
             );
           }
         } catch (err) {
-          // patchResult.undo();
+          patchResult.undo();
           console.error("Error editing conversation:", err);
         }
       },

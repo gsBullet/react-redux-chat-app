@@ -10,9 +10,12 @@ export const messagesApi = apiSlice.injectEndpoints({
       query: (data) => ({
         url: `/messages`,
         method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
         body: data,
       }),
-     
+
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled;

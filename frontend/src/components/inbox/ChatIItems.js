@@ -25,7 +25,6 @@ export default function ChatItems() {
   };
 
   useEffect(() => {
-
     if (page > 1) {
       dispatch(
         conversationsApi.endpoints.getMoreConversations.initiate({
@@ -48,7 +47,7 @@ export default function ChatItems() {
   let content = null;
   if (isLoading) {
     content = <li className="mt-2 text-center">Loading...</li>;
-  } else if (!isLoading && isLoading) {
+  } else if (!isLoading && isError) {
     content = (
       <li className="mt-2 text-center">
         <Error message={error?.data} />

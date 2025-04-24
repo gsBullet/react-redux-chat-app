@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
 import Conversation from "./pages/Conversation";
 import Inbox from "./pages/Inbox";
 import Login from "./pages/Login";
@@ -14,13 +14,16 @@ function App() {
       {!authchecked ? (
         "Authorization checking ......"
       ) : (
-        <Router>
+        <HashRouter
+          future={{
+            v7_startTransition: true,
+          }}
+        >
           <Routes>
             <Route
               path="/"
               element={
                 <PublicRoutes>
-                 
                   <Login />
                 </PublicRoutes>
               }
@@ -52,7 +55,7 @@ function App() {
               }
             />
           </Routes>
-        </Router>
+        </HashRouter>
       )}
     </>
   );
