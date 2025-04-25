@@ -5,6 +5,11 @@ export const messagesApi = apiSlice.injectEndpoints({
     getMessages: builder.query({
       query: (id) =>
         `/messages?conversationId=${id}&_sort=timestamp&_order=desc&_page=1&_limit=${process.env.REACT_APP_MESSAGES_LIMIT}`,
+      async onQueryStarted({ id }, { queryFulfilled, dispatch }) {
+
+        const messages = await queryFulfilled;
+        console.log(`messages update`, messages);
+      }
     }),
     addMessage: builder.mutation({
       query: (data) => ({

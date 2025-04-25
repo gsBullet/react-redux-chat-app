@@ -22,14 +22,11 @@ export const conversationsApi = apiSlice.injectEndpoints({
           reconnectionDelay: 1000,
           reconnection: true,
           reconnectionAttempts: 10,
-          transports: ["websocket"],
-          agent: false,
-          upgrade: false,
-          rejectUnauthorized: false,
         });
+
         try {
           await cacheDataLoaded;
-          socket.on("conversations", (data) => {
+          socket.on("conversations", async (data) => {
             updateCachedData((draft) => {
               const conversation = draft.data.find(
                 (d) => d._id == data.data._id
@@ -76,7 +73,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
 
     getConversation: builder.query({
       query: ({ userEmail, participantEmail }) =>
-        `/conversations?participants_like=${userEmail}-${participantEmail}&participants_like=${participantEmail}-${userEmail}`,
+        `/conversation?participants_like=${userEmail}-${participantEmail}&participants_like=${participantEmail}-${userEmail}`,
     }),
     addConversation: builder.mutation({
       query: ({ data, sender }) => ({
@@ -86,6 +83,10 @@ export const conversationsApi = apiSlice.injectEndpoints({
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const conversation = await queryFulfilled;
+
+        console.log("conversation add data", conversation);
+
+        // Optimistically update the cache start
         const pathResult = dispatch(
           apiSlice.util.updateQueryData(
             "getConversations",
@@ -119,7 +120,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
           }
         } catch (err) {
           pathResult.undo();
-          console.error("Error adding message:", err);
+          console.log("Error adding message:", err);
         }
       },
     }),
@@ -131,6 +132,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         // Optimistically update the cache start
+
         const patchResult = dispatch(
           apiSlice.util.updateQueryData(
             "getConversations",
@@ -160,7 +162,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
             );
             const res = await dispatch(
               messagesApi.endpoints.addMessage.initiate({
-                conversation_id: conversation?.data?._id,
+                conversationId: conversation?.data?._id,
                 sender: senderUser,
                 receiver: receiverUser,
                 message: arg.data.message,
@@ -172,7 +174,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
             dispatch(
               apiSlice.util.updateQueryData(
                 "getMessages",
-                res?.conversation_id.toString(),
+                res?.conversationId,
                 (draft) => {
                   draft.push(res);
                 }
@@ -181,7 +183,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
           }
         } catch (err) {
           patchResult.undo();
-          console.error("Error editing conversation:", err);
+          console.log("Error editing conversation:", err);
         }
       },
     }),

@@ -55,19 +55,19 @@ export default function Modal({ open, control }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (conversation?.length > 0) {
+    if (conversation) {
       // edit conversation
       editConversation({
         _id: conversation._id,
         sender: myEmail,
         data: {
           participants: `${myEmail}-${participant?.email}`,
-          users: [loggedInUser?._id, participant?._id],
+          users: [loggedInUser, participant],
           message,
           timestamp: new Date().getTime(),
         },
       });
-    } else if (conversation?.length === 0) {
+    } else if (!conversation) {
       // add conversation
       addConversation({
         sender: myEmail,

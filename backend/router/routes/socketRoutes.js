@@ -7,4 +7,5 @@ router.post("/conversations", socketController.addConversationBySocket);
 router.patch("/conversations", socketController.updateConversationBySocket);
 
 router.post("/messages", socketController.addMessagesBySocket);
-router.patch("/messages", socketController.updateMessagesBySocket);
+
+module.exports = () => router;

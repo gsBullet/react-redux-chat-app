@@ -24,8 +24,20 @@ module.exports = {
   },
 
   addMessage: async (req, res) => {
+    const body = {
+      ...req.body,
+      timestamp: req.body.timestamp,
+    };
     try {
-      const savedMessage = await messagesModel.create(req.body);
+      const path = req.path;
+      const method = req.method;
+
+      if (path.includes("/messages") && method === "POST") {
+        global.io.emit("messages", {
+          data: req.body,
+        });
+      }
+      const savedMessage = await messagesModel.create(body);
       return res.status(201).json(savedMessage);
     } catch (error) {
       console.log("Error sending message:", error);

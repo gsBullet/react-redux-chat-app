@@ -14,8 +14,8 @@ module.exports = mongoose.model(
         type: String,
       },
       timestamp: {
-        type: Date,
-        default: Date.now,
+        type: Number,
+        required: true,
       },
     },
 

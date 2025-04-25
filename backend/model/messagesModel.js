@@ -23,7 +23,7 @@ const messageSchema = new Schema(
       required: true,
     },
     timestamp: {
-      type: Date,
+      type: Number,
       required: true,
     },
   },

@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
   // Verify the token
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(401).json({ message: "JWT expired" });
     }
     // console.log(`token`, decoded);
     req.user = decoded;
