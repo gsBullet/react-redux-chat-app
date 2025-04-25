@@ -29,6 +29,7 @@ export const conversationsApi = apiSlice.injectEndpoints({
           socket.on("conversations", async (data) => {
             updateCachedData((draft) => {
               const conversation = draft.data.find(
+                // eslint-disable-next-line eqeqeq
                 (d) => d._id == data.data._id
               );
               if (conversation?._id) {
