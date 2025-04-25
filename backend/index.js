@@ -1,17 +1,18 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const app = express();
+const PORT = process.env.PORT || 9000;
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const formData = require("express-form-data");
 const allRoutes = require("./router/allRoutes");
 const dbConnector = require("./config/dbConnector");
+const http = require("http");
 
-require("dotenv").config();
-
-const app = express();
-
-const PORT = process.env.PORT || 9000;
+const { Server } = require("socket.io");
+const server = http.createServer(app);
 
 // 1. Configure CORS options
 const corsOptions = {
@@ -30,8 +31,42 @@ const corsOptions = {
 // 2. Use CORS middleware with the specified options
 app.use(cors(corsOptions));
 
-//   // 3. Handle preflight requests for all routes
-//   app.options("*", cors(corsOptions));
+// 3. Socket.io setup
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+global.io = io;
+
+app.use((req, res, next) => {
+  const originalSend = res.send;
+
+  res.send = (body) => {
+    const path = req.path;
+    const method = req.method;
+
+    // Check if response is JSON
+    if (typeof body === "object") {
+      if (
+        path.includes("/conversations") &&
+        (method === "POST" || method === "PATCH")
+      ) {
+        io.emit("conversations", { data: body });
+      }
+
+      if (path.includes("/messages") && method === "POST") {
+        io.emit("messages", { data: body });
+      }
+    }
+
+    originalSend.call(res, body);
+  };
+
+  next();
+});
 
 // 4. Additional Middleware
 app.set("json spaces", 4);

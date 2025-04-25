@@ -11,7 +11,7 @@ export const messagesApi = apiSlice.injectEndpoints({
         url: `/messages`,
         method: "POST",
         headers: {
-          "content-type": "application/json",
+          "content-type": "application/json",       
         },
         body: data,
       }),

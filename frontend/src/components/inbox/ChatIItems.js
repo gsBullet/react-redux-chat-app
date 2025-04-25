@@ -65,13 +65,13 @@ export default function ChatItems() {
         height={window.innerHeight - 129}
       >
         {conversations.map((conversation) => {
-          const { id, message, timestamp } = conversation || {};
+          const { _id, message, timestamp } = conversation || {};
           const partner = conversation?.users?.find((u) => u?.email !== email);
           const { name, email: partnerEmail } = partner || {};
 
           return (
-            <li key={id}>
-              <Link to={`/inbox/${id}`}>
+            <li key={_id}>
+              <Link to={`/inbox/${_id}`}>
                 <ChatItem
                   avatar={gravaterUrl(partnerEmail, { size: 80 })}
                   name={name}

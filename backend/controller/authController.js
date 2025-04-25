@@ -30,7 +30,7 @@ module.exports = {
       const token = jwt.sign(
         { _id: user._id, email: user.email },
         process.env.JWT_SECRET,
-        { expiresIn: "720h" }
+        { expiresIn: "1h" }
       );
 
       return res.status(201).json({
@@ -89,7 +89,7 @@ module.exports = {
           _id: user._id,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "720h" } // Always set expiration
+        { expiresIn: "1h" } // Always set expiration
       );
 
       // Minimal response payload
@@ -107,6 +107,14 @@ module.exports = {
       console.error("Login error:", err);
       return res.status(500).json({ message: err?.message });
     }
+  },
+  getUser: async (req, res) => {
+    const { email } = req.params || {};
+    const user = await userModel.findOne({email}).select("name email _id");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json(user);
   },
   logout: (req, res) => {
     // Dummy logout logic

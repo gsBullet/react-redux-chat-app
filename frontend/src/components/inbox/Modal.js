@@ -20,21 +20,23 @@ export default function Modal({ open, control }) {
   const [responseError, setResponseError] = useState("");
   const [conversation, setConversation] = useState(undefined);
 
-  const { data: participant } = useGetUserQuery(to, {
+  const {
+    data: participant,
+    isError,
+    error,
+  } = useGetUserQuery(to, {
     skip: !userCheck,
   });
-
   const [addConversation, { isSuccess: isAddConversationSuccess }] =
     useAddConversationMutation();
   const [editConversation, { isSuccess: isEditConversationSuccess }] =
     useEditConversationMutation();
 
-
   const debounceHandler = (fn, delay) => {
-    let timeoutId;
+    let timeout_id;
     return (...args) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
+      clearTimeout(timeout_id);
+      timeout_id = setTimeout(() => {
         fn(...args);
       }, delay);
     };
@@ -56,11 +58,11 @@ export default function Modal({ open, control }) {
     if (conversation?.length > 0) {
       // edit conversation
       editConversation({
-        id: conversation[0].id,
+        _id: conversation._id,
         sender: myEmail,
         data: {
-          participants: `${myEmail}-${participant[0].email}`,
-          users: [loggedInUser, participant[0]],
+          participants: `${myEmail}-${participant?.email}`,
+          users: [loggedInUser?._id, participant?._id],
           message,
           timestamp: new Date().getTime(),
         },
@@ -70,8 +72,8 @@ export default function Modal({ open, control }) {
       addConversation({
         sender: myEmail,
         data: {
-          participants: `${myEmail}-${participant[0].email}`,
-          users: [loggedInUser, participant[0]],
+          participants: `${myEmail}-${participant?.email}`,
+          users: [loggedInUser, participant],
           message,
           timestamp: new Date().getTime(),
         },
@@ -79,9 +81,8 @@ export default function Modal({ open, control }) {
     }
   };
 
-
   useEffect(() => {
-    if (participant?.length > 0 && participant[0].email !== myEmail) {
+    if (participant && participant?.email !== myEmail) {
       // check conversation existance
       dispatch(
         conversationsApi.endpoints.getConversation.initiate({
@@ -124,7 +125,7 @@ export default function Modal({ open, control }) {
                   To
                 </label>
                 <input
-                  id="to"
+                  _id="to"
                   name="to"
                   type="email"
                   required
@@ -138,7 +139,7 @@ export default function Modal({ open, control }) {
                   Message
                 </label>
                 <textarea
-                  id="message"
+                  _id="message"
                   name="message"
                   type="text"
                   required
@@ -156,21 +157,19 @@ export default function Modal({ open, control }) {
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
                 disabled={
                   conversation === undefined ||
-                  (participant?.length > 0 && participant[0].email === myEmail)
+                  (participant && participant?.email === myEmail)
                 }
               >
                 Send Message
               </button>
             </div>
 
-            {participant?.length === 0 && (
-              <Error message="This user does not exist!" />
-            )}
-            {participant?.length > 0 && participant[0].email === myEmail && (
+            {isError && <Error message={error?.data?.message} />}
+            {!isError && participant && participant?.email === myEmail && (
               <Error message="You can not send message to yourself!" />
             )}
 
-            {responseError && <Error message={responseError} />}
+            {!isError && responseError && <Error message={responseError} />}
           </form>
         </div>
       </>
