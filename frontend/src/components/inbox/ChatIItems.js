@@ -16,6 +16,8 @@ export default function ChatItems() {
   const { email } = user || {};
   const { data, isError, isLoading, error } =
     useGetConversationsQuery(email) || {};
+
+  console.log(`error`, error);
   const { data: conversations, totalCount } = data || {};
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);

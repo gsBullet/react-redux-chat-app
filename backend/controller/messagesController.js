@@ -32,12 +32,12 @@ module.exports = {
       const path = req.path;
       const method = req.method;
 
+      const savedMessage = await messagesModel.create(body);
       if (path.includes("/messages") && method === "POST") {
         global.io.emit("messages", {
-          data: req.body,
+          data: savedMessage,
         });
       }
-      const savedMessage = await messagesModel.create(body);
       return res.status(201).json(savedMessage);
     } catch (error) {
       console.log("Error sending message:", error);
