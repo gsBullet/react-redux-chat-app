@@ -13,7 +13,6 @@ export default function Login() {
 
   useEffect(() => {
     if (data?.accessToken && data?.user) {
-      //   localStorage.setItem("accessToken", data.accessToken);
       navigate("/inbox");
     }
 
