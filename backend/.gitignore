@@ -9,7 +9,7 @@ package-lock.json
 /coverage
 
 
-./firebase/serviceAccount.json
+backend/firebase/serviceAccount.json
 
 # production
 /build 
