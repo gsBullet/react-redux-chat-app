@@ -1,8 +1,14 @@
+/* eslint-disable no-unused-vars */
 import { Link, useNavigate } from "react-router-dom";
 import logoImage from "../assets/images/lws-logo-light.svg";
 import Error from "../components/ui/Error";
 import { useEffect, useState } from "react";
-import { useLoginMutation } from "../features/auth/authApi";
+import {
+  authApi,
+  useGoogleAuthMutation,
+  useLoginMutation,
+} from "../features/auth/authApi";
+import { authWithGoogle } from "../config/gmailConfig";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +16,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [login, { data, isLoading, error: responseError }] = useLoginMutation();
+  const [googleAuth, { data: googleData }] = useGoogleAuthMutation();
 
   useEffect(() => {
     if (data?.accessToken && data?.user) {
@@ -33,6 +40,26 @@ export default function Login() {
     }
     login({ email, password });
   };
+
+  async function handleGoogleAuth(e) {
+    e.preventDefault();
+    // Google OAuth implementation here
+    authWithGoogle()
+      .then(async (user) => {
+        googleAuth({
+          accessToken: user.accessToken,
+          user:{
+            name: user?.auth?.displayName,
+            email: user?.auth?.email,
+          }
+        });
+      })
+      .catch((err) => {
+        console.log("Google auth error", err);
+        // toast.error(err);
+      });
+  }
+
   return (
     <div className="grid place-items-center h-screen bg-[#F9FAFB">
       <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -86,17 +113,6 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end">
-              <div className="text-sm">
-                <Link
-                  to="/register"
-                  className="font-medium text-violet-600 hover:text-violet-500"
-                >
-                  Register
-                </Link>
-              </div>
-            </div>
-
             <div>
               <button
                 type="submit"
@@ -106,9 +122,71 @@ export default function Login() {
                 Sign in
               </button>
             </div>
-
-            {error !== "" && <Error message={error} />}
           </form>
+          <div className="flex  flex-col justify-end">
+            {/* <div className="text-sm">
+                <Link
+                  to="/register"
+                  className="font-medium text-violet-600 hover:text-violet-500"
+                >
+                  Register
+                </Link>
+              </div> */}
+            <div>
+              <div className="text-sm lowercase text-center">OR</div>
+            </div>
+
+            <div className="text-sm text-center mt-3">
+              <button
+                className=" py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                onClick={handleGoogleAuth}
+              >
+                <i className="fa-brands fa-google font-medium text-white"></i>{" "}
+                &nbsp; Continue With Google
+              </button>
+            </div>
+            <div className="text-sm text-center mt-3">
+              <button
+                className=" py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                // onClick={handleGoogleAuth}
+              >
+                <i className="fa-brands fa-facebook font-medium text-white"></i>{" "}
+                &nbsp; Continue With Facebook
+              </button>
+            </div>
+            <div className="text-sm text-center mt-3">
+              <button
+                className=" py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                // onClick={handleGoogleAuth}
+              >
+                <i className="fa-brands fa-github font-medium text-white"></i>{" "}
+                &nbsp; Continue With Github
+              </button>
+            </div>
+            <div className="text-sm text-center mt-3">
+              <button
+                className=" py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                // onClick={handleGoogleAuth}
+              >
+                <i className="fa-brands fa-twitter font-medium text-white"></i>{" "}
+                &nbsp; Continue With Twitter
+              </button>
+            </div>
+
+            <div className="mt-3">
+              <p className="text-sm text-center">
+                Don't have account?{" "}
+                <Link
+                  to={"/register"}
+                  className="font-medium text-violet-600 hover:text-violet-500"
+                >
+                  Register Now
+                </Link>
+              </p>
+            </div>
+          </div>
+
+          {error !== "" && <Error message={error} />}
         </div>
       </div>
     </div>

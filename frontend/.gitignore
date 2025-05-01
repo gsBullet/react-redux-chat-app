@@ -9,6 +9,9 @@
 
 package-lock.json
 
+
+/firebase/serviceAccount.json
+
 # testing
 /coverage
 

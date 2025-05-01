@@ -1,6 +1,24 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const userModel = require("../model/userModel");
+const admin = require("firebase-admin");
+const { getAuth } = require("firebase-admin/auth");
+const serviceAccountKey = require("../firebase/serviceAccount.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccountKey),
+});
+
+// const generateUserName = async (email) => {
+//   const { nanoid } = await import("nanoid");
+//   let userName = email.split("@")[0];
+//   const isUniqueUserName = await userModel
+//     .exists({ "name": userName })
+//     .then((result) => result);
+//   isUniqueUserName ? (userName += nanoid().substring(0, 5)) : "";
+//   return userName;
+// };
+
 module.exports = {
   register: async (req, res) => {
     const { email, password, name } = req.body;
@@ -47,6 +65,52 @@ module.exports = {
       return res
         .status(500)
         .json({ message: err?.message || "Registration failed" });
+    }
+  },
+
+  googleAuth: async (req, res, next) => {
+    const { accessToken } = req.body;
+    try {
+      const decodedUser = await getAuth().verifyIdToken(accessToken);
+      let { name, email, picture } = decodedUser;
+      picture = picture.replace("s96-c", "s384-c");
+
+      let user = await userModel
+        .findOne({
+          email,
+        })
+        .select("-password");
+
+      if (user) {
+        if (!user.google_auth) {
+          return res
+            .status(403)
+            .json({ message: "This user was signed up without Google" });
+        }
+      } else {
+        user = new userModel({
+          name,
+          email,
+          google_auth: true,
+        });
+        await user.save();
+
+        // Simplified token payload
+        const token = jwt.sign(
+          { _id: user._id, email: user.email },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+        return res.status(201).json({
+          accessToken: token,
+          user: { _id: user._id, name: user.name, email: user.email },
+          message: "User registered successfully",
+        });
+      }
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: err.message || "Try with some other Google account" });
     }
   },
   login: async (req, res) => {
@@ -110,7 +174,7 @@ module.exports = {
   },
   getUser: async (req, res) => {
     const { email } = req.params || {};
-    const user = await userModel.findOne({email}).select("name email _id");
+    const user = await userModel.findOne({ email }).select("name email _id");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
