@@ -10,7 +10,8 @@
 package-lock.json
 
 
-/firebase/serviceAccount.json
+/config/gmailConfig.js
+
 
 # testing
 /coverage
