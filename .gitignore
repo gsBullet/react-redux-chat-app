@@ -16,3 +16,4 @@ backend/.env.development.local
 backend/.env.test.local
 backend/.env.production.local
 backend/firebase/serviceAccount.json
+/backend/firebase/serviceAccount.json
