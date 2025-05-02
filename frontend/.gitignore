@@ -11,6 +11,7 @@ package-lock.json
 
 
 /config/gmailConfig.js
+config/gmailConfig.js
 
 
 # testing
@@ -18,7 +19,7 @@ package-lock.json
 
 # production
 /build
-
+.env
 # misc
 .DS_Store
 .vscode
