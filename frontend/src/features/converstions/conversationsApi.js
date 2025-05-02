@@ -84,7 +84,6 @@ export const conversationsApi = apiSlice.injectEndpoints({
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const conversation = await queryFulfilled;
-        console.log(`conversation add`, conversation);
 
         // Optimistically update the cache start
         const pathResult = dispatch(
@@ -153,7 +152,6 @@ export const conversationsApi = apiSlice.injectEndpoints({
         );
 
         const conversation = await queryFulfilled;
-        console.log(`conversation edit`, conversation);
 
         try {
           if (conversation?.data?._id) {

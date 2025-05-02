@@ -3,6 +3,7 @@ import logoImage from "../assets/images/lws-logo-light.svg";
 import { useEffect, useState } from "react";
 import { useRegisterMutation } from "../features/auth/authApi";
 import Error from "../components/ui/Error";
+import Success from "../components/ui/Success";
 export default function Register() {
   const [register, { data, isLoading, error: responseError }] =
     useRegisterMutation();
@@ -17,6 +18,9 @@ export default function Register() {
 
   useEffect(() => {
     if (data?.message) {
+      Success({
+        message: data.message,
+      });
       navigate("/inbox");
     }
 

@@ -9,6 +9,7 @@ import {
   useLoginMutation,
 } from "../features/auth/authApi";
 import { authWithGoogle } from "../config/gmailConfig";
+import Success from "../components/ui/Success";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,10 +18,14 @@ export default function Login() {
 
   const navigate = useNavigate();
   const [login, { data, isLoading, error: responseError }] = useLoginMutation();
-  const [googleAuth, { error: googleError }] = useGoogleAuthMutation();
+  const [googleAuth, { data: googleData, error: googleError }] =
+    useGoogleAuthMutation();
 
   useEffect(() => {
     if (data?.accessToken && data?.user) {
+      Success({
+        message: data.message,
+      });
       navigate("/inbox");
     }
 
@@ -59,6 +64,9 @@ export default function Login() {
             name: user?.displayName,
             email: user?.email,
           },
+        });
+        Success({
+          message: "Google Logged In successfully",
         });
       })
       .catch((err) => {

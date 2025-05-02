@@ -12,8 +12,6 @@ export default function ChatHead({ messages }) {
   const partnerImage =
     sender?.email === email ? receiver?.authImage : sender?.authImage;
 
-  console.log(`partnerImage`, partnerImage);
-
   return (
     <div className="relative flex items-center p-3 border-b border-gray-300">
       <img
