@@ -17,12 +17,14 @@ export default function ChatItems() {
   const { data, isError, isLoading, error } =
     useGetConversationsQuery(email) || {};
   const { data: conversations, totalCount } = data || {};
+  console.log(`conversations chat item`, conversations);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
   const fetchMore = () => {
     setPage((preV) => preV + 1);
   };
+
 
   useEffect(() => {
     if (page > 1) {
@@ -67,13 +69,24 @@ export default function ChatItems() {
         {conversations.map((conversation) => {
           const { _id, message, timestamp } = conversation || {};
           const partner = conversation?.users?.find((u) => u?.email !== email);
-          const { name, email: partnerEmail } = partner || {};
+          console.log(`partner`, partner);
+
+          const {
+            name,
+            email: partnerEmail,
+            authImage: partnerImage,
+          } = partner || {};
+
 
           return (
             <li key={_id}>
               <Link to={`/inbox/${_id}`}>
                 <ChatItem
-                  avatar={gravaterUrl(partnerEmail, { size: 80 })}
+                  avatar={
+                    partnerImage
+                      ? partnerImage
+                      : gravaterUrl(partnerEmail, { size: 80 })
+                  }
                   name={name}
                   lastMessage={message}
                   lastTime={moment(timestamp).fromNow()}

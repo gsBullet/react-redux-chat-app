@@ -211,7 +211,7 @@ module.exports = {
   },
   getUser: async (req, res) => {
     const { email } = req.params || {};
-    const user = await userModel.findOne({ email }).select("name email _id");
+    const user = await userModel.findOne({ email }).select("name email _id authImage");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

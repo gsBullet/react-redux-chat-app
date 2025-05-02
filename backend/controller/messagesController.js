@@ -26,6 +26,7 @@ module.exports = {
   addMessage: async (req, res) => {
     const body = {
       ...req.body,
+      
       timestamp: req.body.timestamp,
     };
     try {
@@ -41,16 +42,16 @@ module.exports = {
       return res.status(201).json(savedMessage);
     } catch (error) {
       console.log("Error sending message:", error);
-      res.status(500).json({ message: "Error sending message" });
+      return res.status(500).json({ message: "Error sending message" });
     }
   },
   deleteMessage: async (req, res) => {
     try {
       const { id } = req.params;
       await Message.findByIdAndDelete(id);
-      res.status(200).json({ message: "Message deleted successfully" });
+      return  res.status(200).json({ message: "Message deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Error deleting message" });
+      return  res.status(500).json({ message: "Error deleting message" });
     }
   },
   updateMessage: async (req, res) => {
@@ -59,7 +60,7 @@ module.exports = {
       const updatedMessage = await Message.findByIdAndUpdate(id, req.body, {
         new: true,
       });
-      res.status(200).json(updatedMessage);
+     return res.status(200).json(updatedMessage);
     } catch (error) {
       res.status(500).json({ message: "Error updating message" });
     }

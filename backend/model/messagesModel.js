@@ -11,12 +11,22 @@ const messageSchema = new Schema(
     sender: {
       email: { type: String, required: true },
       name: { type: String, required: true },
-      _id: { type: String, required: true }, // assuming this comes from JSON DB or your own ID system
+      _id: { type: String, required: true },
+      authImage: {
+        type: String,
+        default:
+          "https://www.vectorstock.com/royalty-free-vector/approved-chat-app-icon-vector-28873697",
+      },
     },
     receiver: {
       email: { type: String, required: true },
       name: { type: String, required: true },
       _id: { type: String, required: true },
+      authImage: {
+        type: String,
+        default:
+          "https://www.vectorstock.com/royalty-free-vector/approved-chat-app-icon-vector-28873697",
+      },
     },
     message: {
       type: String,

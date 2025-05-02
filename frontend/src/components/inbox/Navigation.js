@@ -6,7 +6,6 @@ import gravaterUrl from "gravatar-url";
 export default function Navigation() {
   const { user } = useSelector((state) => state?.auth) || {};
   const { email, name, authImage } = user || {};
-  console.log(`authImage`, user);
   const dispatch = useDispatch();
   const logout = () => {
     dispatch(userLoggedOut());
@@ -22,7 +21,7 @@ export default function Navigation() {
               src={authImage ? authImage : gravaterUrl(email, { size: 80 })}
               // height={80}
               // width={80}
-              alt="user_image"
+              alt="user"
             />
             <h4 className="inline-block text-4xl pl-2 text-white font-bold leading-[22px] align-middle capitalize">
               {name}

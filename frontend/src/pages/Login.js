@@ -15,8 +15,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  console.log(error, "error");
-
   const navigate = useNavigate();
   const [login, { data, isLoading, error: responseError }] = useLoginMutation();
   const [googleAuth, { error: googleError }] = useGoogleAuthMutation();

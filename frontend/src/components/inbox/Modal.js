@@ -27,6 +27,7 @@ export default function Modal({ open, control }) {
   } = useGetUserQuery(to, {
     skip: !userCheck,
   });
+
   const [addConversation, { isSuccess: isAddConversationSuccess }] =
     useAddConversationMutation();
   const [editConversation, { isSuccess: isEditConversationSuccess }] =
