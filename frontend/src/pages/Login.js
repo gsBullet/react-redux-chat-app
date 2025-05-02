@@ -14,9 +14,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  console.log(error, "error");
+
   const navigate = useNavigate();
   const [login, { data, isLoading, error: responseError }] = useLoginMutation();
-  const [googleAuth, { data: googleData }] = useGoogleAuthMutation();
+  const [googleAuth, { error: googleError }] = useGoogleAuthMutation();
 
   useEffect(() => {
     if (data?.accessToken && data?.user) {
@@ -27,6 +30,12 @@ export default function Login() {
       setError(responseError?.data);
     }
   }, [data, responseError, navigate]);
+
+  useEffect(() => {
+    if (googleError?.data) {
+      setError(googleError?.data);
+    }
+  }, [googleError]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -45,18 +54,17 @@ export default function Login() {
     e.preventDefault();
     // Google OAuth implementation here
     authWithGoogle()
-      .then(async (user) => {
+      .then((user) => {
         googleAuth({
           accessToken: user.accessToken,
-          user:{
-            name: user?.auth?.displayName,
-            email: user?.auth?.email,
-          }
+          user: {
+            name: user?.displayName,
+            email: user?.email,
+          },
         });
       })
       .catch((err) => {
         console.log("Google auth error", err);
-        // toast.error(err);
       });
   }
 
@@ -123,6 +131,7 @@ export default function Login() {
               </button>
             </div>
           </form>
+          {error !== "" && <Error message={error?.message} />}
           <div className="flex  flex-col justify-end">
             {/* <div className="text-sm">
                 <Link
@@ -185,8 +194,6 @@ export default function Login() {
               </p>
             </div>
           </div>
-
-          {error !== "" && <Error message={error} />}
         </div>
       </div>
     </div>

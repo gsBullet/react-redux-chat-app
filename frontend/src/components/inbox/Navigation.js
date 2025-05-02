@@ -5,7 +5,8 @@ import gravaterUrl from "gravatar-url";
 
 export default function Navigation() {
   const { user } = useSelector((state) => state?.auth) || {};
-  const { email, name } = user || {};
+  const { email, name, authImage } = user || {};
+  console.log(`authImage`, user);
   const dispatch = useDispatch();
   const logout = () => {
     dispatch(userLoggedOut());
@@ -14,21 +15,29 @@ export default function Navigation() {
   return (
     <nav className="border-general sticky top-0 z-40 border-b bg-violet-700 transition-colors">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-16 items-center pl-5">
           <Link to="/">
             <img
               className="h-10 inline border rounded"
-              src={gravaterUrl(email, { size: 80 })}
+              src={authImage ? authImage : gravaterUrl(email, { size: 80 })}
+              // height={80}
+              // width={80}
               alt="user_image"
             />
             <h4 className="inline-block text-4xl pl-2 text-white font-bold leading-[22px] align-middle capitalize">
               {name}
             </h4>
           </Link>
-          <ul>
+          <ul className="pr-5">
             <li className="text-white">
-              <span className="cursor-pointer" onClick={logout}>
-                {" "}
+              <span
+                className="cursor-pointer"
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to logout?")) {
+                    logout();
+                  }
+                }}
+              >
                 Logout
               </span>
             </li>

@@ -62,6 +62,9 @@ export const authApi = apiSlice.injectEndpoints({
     googleAuth: builder.mutation({
       query: (data) => ({
         url: "/google-auth",
+        headers: {
+          "Content-Type": "application/json",
+        },
         method: "POST",
         body: data,
       }),
@@ -77,8 +80,8 @@ export const authApi = apiSlice.injectEndpoints({
           );
           dispatch(
             userLoggedIn({
-              accessToken: result.data.accessToken,
-              user: result.data.user,
+              accessToken: result?.data?.accessToken,
+              user: result?.data?.user,
             })
           );
         } catch (error) {

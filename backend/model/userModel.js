@@ -23,6 +23,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    authImage: {
+      type: String,
+      default:
+        "https://www.vectorstock.com/royalty-free-vector/approved-chat-app-icon-vector-28873697",
+    },
   },
   { timestamps: true }
 );

@@ -73,40 +73,70 @@ module.exports = {
     try {
       const decodedUser = await getAuth().verifyIdToken(accessToken);
       let { name, email, picture } = decodedUser;
-      picture = picture.replace("s96-c", "s384-c");
+      // picture = picture.replace("s96-c", "s384-c");
 
-      let user = await userModel
-        .findOne({
-          email,
-        })
-        .select("-password");
+      let user = await userModel.findOne({
+        email,
+      });
 
       if (user) {
-        if (!user.google_auth) {
+        if (!user?.google_auth) {
           return res
             .status(403)
             .json({ message: "This user was signed up without Google" });
         }
-      } else {
-        user = new userModel({
-          name,
-          email,
-          google_auth: true,
-        });
-        await user.save();
-
-        // Simplified token payload
+        // Generate token with optimized expiration
         const token = jwt.sign(
-          { _id: user._id, email: user.email },
+          {
+            email: user.email,
+            userRole: user.userRole,
+            createdAt: user.createdAt,
+            _id: user._id,
+          },
           process.env.JWT_SECRET,
-          { expiresIn: "1h" }
+          { expiresIn: "1h" } // Always set expiration
         );
+
         return res.status(201).json({
           accessToken: token,
-          user: { _id: user._id, name: user.name, email: user.email },
+          user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            authImage: user.authImage,
+          },
           message: "User registered successfully",
         });
       }
+      const newUser = new userModel({
+        name,
+        email,
+        authImage: picture,
+        google_auth: true,
+      });
+      await newUser.save();
+
+      const token = jwt.sign(
+        {
+          email: newUser.email,
+          userRole: newUser.userRole,
+          createdAt: newUser.createdAt,
+          _id: newUser._id,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" } // Always set expiration
+      );
+
+      return res.status(201).json({
+        accessToken: token,
+        user: {
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          authImage: newUser.picture,
+        },
+        message: "User registered successfully",
+      });
     } catch (err) {
       return res
         .status(500)
@@ -132,6 +162,12 @@ module.exports = {
 
       if (!user) {
         return res.status(401).json({ message: "User not found" });
+      }
+
+      if (user?.google_auth) {
+        return res
+          .status(403)
+          .json({ message: "This user was signed up without Google" });
       }
 
       // Parallel execution of bcrypt and JWT prep
@@ -165,6 +201,7 @@ module.exports = {
           email: user.email,
           _id: user._id,
           userRole: user.userRole,
+          authImage: user.authImage,
         },
       });
     } catch (err) {

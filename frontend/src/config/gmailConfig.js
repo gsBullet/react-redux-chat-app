@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCvv7gwNobuTqnym1oFR7470T-r8YiEPhU",
   authDomain: "chat-app-ee7ba.firebaseapp.com",
