@@ -1,0 +1,12 @@
+
+PORT = 9000
+
+MONGODB_URL = mongodb://localhost:27017/CHATAPP
+JWT_SECRET = 24dd68ef-97a7-4ffc-83ac-353fb51ae02b
+
+
+GITHUB_CLIENT_ID=*********************
+GITHUB_CLIENT_SECRET=**********************
+GITHUB_CALLBACK_URL=http://localhost:5000/auth/github/callback
+
+FRONTEND_URL=http://localhost:3000

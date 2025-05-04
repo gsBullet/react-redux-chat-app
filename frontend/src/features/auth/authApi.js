@@ -88,8 +88,44 @@ export const authApi = apiSlice.injectEndpoints({
         }
       },
     }),
+    githubAuth: builder.mutation({
+      query: (data) => ({
+        url: "/github-auth",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: data,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      
+        try {
+          const result = await queryFulfilled;
+
+          localStorage.setItem(
+            "auth",
+            JSON.stringify({
+              accessToken: result.data.accessToken,
+              user: result.data.user,
+            })
+          );
+          dispatch(
+            userLoggedIn({
+              accessToken: result?.data?.accessToken,
+              user: result?.data?.user,
+            })
+          );
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useGoogleAuthMutation } =
-  apiSlice;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useGoogleAuthMutation,
+  useGithubAuthMutation,
+} = apiSlice;

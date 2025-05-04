@@ -7,11 +7,15 @@ import {
   authApi,
   useGoogleAuthMutation,
   useLoginMutation,
+  useGithubAuthMutation,
 } from "../features/auth/authApi";
 import { authWithGoogle } from "../config/gmailConfig";
 import Success from "../components/ui/Success";
+import { useDispatch } from "react-redux";
+import { authWithGitHub } from "../config/githubConfig";
 
 export default function Login() {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,6 +24,7 @@ export default function Login() {
   const [login, { data, isLoading, error: responseError }] = useLoginMutation();
   const [googleAuth, { data: googleData, error: googleError }] =
     useGoogleAuthMutation();
+  const [githubAuth, { data: githubData }] = useGithubAuthMutation();
 
   useEffect(() => {
     if (data?.accessToken && data?.user) {
@@ -71,6 +76,28 @@ export default function Login() {
       })
       .catch((err) => {
         console.log("Google auth error", err);
+      });
+  }
+
+  async function handleGithubAuth(e) {
+    e.preventDefault();
+
+    authWithGitHub()
+      .then((user) => {
+
+        githubAuth({
+          accessToken: user.accessToken,
+          user: {
+            name: user?.displayName,
+            email: user?.email,
+          },
+        });
+        Success({
+          message: "Github Logged In successfully",
+        });
+      })
+      .catch((err) => {
+        console.log("Github auth error", err);
       });
   }
 
@@ -139,14 +166,6 @@ export default function Login() {
           </form>
           {error !== "" && <Error message={error?.message} />}
           <div className="flex  flex-col justify-end">
-            {/* <div className="text-sm">
-                <Link
-                  to="/register"
-                  className="font-medium text-violet-600 hover:text-violet-500"
-                >
-                  Register
-                </Link>
-              </div> */}
             <div>
               <div className="text-sm lowercase text-center">OR</div>
             </div>
@@ -172,7 +191,7 @@ export default function Login() {
             <div className="text-sm text-center mt-3">
               <button
                 className=" py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
-                // onClick={handleGoogleAuth}
+                onClick={handleGithubAuth}
               >
                 <i className="fa-brands fa-github font-medium text-white"></i>{" "}
                 &nbsp; Continue With Github

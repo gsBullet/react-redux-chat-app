@@ -4,6 +4,7 @@ const userModel = require("../model/userModel");
 const admin = require("firebase-admin");
 const { getAuth } = require("firebase-admin/auth");
 const serviceAccountKey = require("../firebase/serviceAccount.json");
+require("../config/passport");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccountKey),
@@ -143,6 +144,83 @@ module.exports = {
         .json({ message: err.message || "Try with some other Google account" });
     }
   },
+
+  githubAuth: async (req, res) => {
+    const { accessToken } = req.body;
+    try {
+      const decodedUser = await getAuth().verifyIdToken(accessToken);
+      let { name, email, picture } = decodedUser;
+      // picture = picture.replace("s96-c", "s384-c");
+
+      let user = await userModel.findOne({
+        email,
+      });
+
+      if (user) {
+        if (!user?.google_auth) {
+          return res
+            .status(403)
+            .json({ message: "This user was signed up without Github" });
+        }
+        // Generate token with optimized expiration
+        const token = jwt.sign(
+          {
+            email: user.email,
+            userRole: user.userRole,
+            createdAt: user.createdAt,
+            _id: user._id,
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" } // Always set expiration
+        );
+
+        return res.status(201).json({
+          accessToken: token,
+          user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            authImage: user.authImage,
+          },
+          message: "User registered successfully",
+        });
+      }
+      const newUser = new userModel({
+        name,
+        email,
+        authImage: picture,
+        google_auth: true,
+      });
+      await newUser.save();
+
+      const token = jwt.sign(
+        {
+          email: newUser.email,
+          userRole: newUser.userRole,
+          createdAt: newUser.createdAt,
+          _id: newUser._id,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" } // Always set expiration
+      );
+
+      return res.status(201).json({
+        accessToken: token,
+        user: {
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          authImage: newUser.picture,
+        },
+        message: "User registered successfully",
+      });
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: err.message || "Try with some other Google account" });
+    }
+  },
+
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -167,7 +245,7 @@ module.exports = {
       if (user?.google_auth) {
         return res
           .status(403)
-          .json({ message: "This user was signed up without Google" });
+          .json({ message: "This user was signed up with Google" });
       }
 
       // Parallel execution of bcrypt and JWT prep
@@ -211,7 +289,9 @@ module.exports = {
   },
   getUser: async (req, res) => {
     const { email } = req.params || {};
-    const user = await userModel.findOne({ email }).select("name email _id authImage");
+    const user = await userModel
+      .findOne({ email })
+      .select("name email _id authImage");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
