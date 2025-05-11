@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Link, useNavigate } from "react-router-dom";
-import logoImage from "../assets/images/lws-logo-light.svg";
+import logoImage from "../assets/images/logo.png";
 import Error from "../components/ui/Error";
 import { useEffect, useState } from "react";
 import {
@@ -8,11 +8,13 @@ import {
   useGoogleAuthMutation,
   useLoginMutation,
   useGithubAuthMutation,
+  useTwitterAuthMutation,
 } from "../features/auth/authApi";
 import { authWithGoogle } from "../config/gmailConfig";
 import Success from "../components/ui/Success";
 import { useDispatch } from "react-redux";
 import { authWithGitHub } from "../config/githubConfig";
+import { authWithTwitter } from "../config/twitterConfig";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -25,6 +27,7 @@ export default function Login() {
   const [googleAuth, { data: googleData, error: googleError }] =
     useGoogleAuthMutation();
   const [githubAuth, { data: githubData }] = useGithubAuthMutation();
+  const [twitterAuth, { data: twitterData }] = useTwitterAuthMutation();
 
   useEffect(() => {
     if (data?.accessToken && data?.user) {
@@ -84,7 +87,6 @@ export default function Login() {
 
     authWithGitHub()
       .then((user) => {
-
         githubAuth({
           accessToken: user.accessToken,
           user: {
@@ -100,6 +102,27 @@ export default function Login() {
         console.log("Github auth error", err);
       });
   }
+  async function handleTwitterAuth(e) {
+    e.preventDefault();
+
+    authWithTwitter()
+      .then((user) => {
+        console.log(`user`, user);
+        // twitterAuth({
+        //   accessToken: user.accessToken,
+        //   user: {
+        //     name: user?.displayName,
+        //     email: user?.email,
+        //   },
+        // });
+        Success({
+          message: "Twitter Logged In successfully",
+        });
+      })
+      .catch((err) => {
+        console.log("Github auth error", err);
+      });
+  }
 
   return (
     <div className="grid place-items-center h-screen bg-[#F9FAFB">
@@ -108,7 +131,7 @@ export default function Login() {
           <div>
             <Link to="/">
               <img
-                className="mx-auto h-12 w-auto"
+                className="mx-auto h-12 w-auto border-2 border-violet-600 rounded-full"
                 src={logoImage}
                 alt="Learn with sumit"
               />
@@ -179,7 +202,7 @@ export default function Login() {
                 &nbsp; Continue With Google
               </button>
             </div>
-            <div className="text-sm text-center mt-3">
+            <div className="text-sm text-center mt-3 hidden">
               <button
                 className=" py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
                 // onClick={handleGoogleAuth}
@@ -197,10 +220,10 @@ export default function Login() {
                 &nbsp; Continue With Github
               </button>
             </div>
-            <div className="text-sm text-center mt-3">
+            <div className="text-sm text-center mt-3 hidden">
               <button
                 className=" py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
-                // onClick={handleGoogleAuth}
+                onClick={handleTwitterAuth}
               >
                 <i className="fa-brands fa-twitter font-medium text-white"></i>{" "}
                 &nbsp; Continue With Twitter

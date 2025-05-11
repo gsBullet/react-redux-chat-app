@@ -98,10 +98,42 @@ export const authApi = apiSlice.injectEndpoints({
         body: data,
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      
         try {
           const result = await queryFulfilled;
 
+          localStorage.setItem(
+            "auth",
+            JSON.stringify({
+              accessToken: result.data.accessToken,
+              user: result.data.user,
+            })
+          );
+          dispatch(
+            userLoggedIn({
+              accessToken: result?.data?.accessToken,
+              user: result?.data?.user,
+            })
+          );
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
+
+    twitterAuth: builder.mutation({
+      query: (data) => ({
+        url: "/twitter-auth",
+        headers: {
+          "Content-Type": "application/json",
+           'Authorization': `Bearer ${data?.token}`
+        },
+        method: "POST",
+        body: data,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        console.log("twitter", arg);
+        try {
+          const result = await queryFulfilled;
           localStorage.setItem(
             "auth",
             JSON.stringify({
@@ -128,4 +160,5 @@ export const {
   useLoginMutation,
   useGoogleAuthMutation,
   useGithubAuthMutation,
+  useTwitterAuthMutation,
 } = apiSlice;
